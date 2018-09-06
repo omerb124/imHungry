@@ -1,6 +1,8 @@
 <?php
 
+include_once 'utils.class.php';
 include_once 'simple_html_dom.class.php';
+
 
 	class Rest{
 
@@ -23,10 +25,13 @@ include_once 'simple_html_dom.class.php';
 		public $rest_rating;
 
 		// Location - lon
-		public $lot;
+		public $lon;
 
 		// Location - lat
 		public $lat;
+
+		// Rest Category
+		public $category;
 
 
 	}
@@ -84,6 +89,7 @@ include_once 'simple_html_dom.class.php';
 		*** $this->shipping_cost @string - shipping cost
 		*** $this->min_price @string - minimum price to delivery
 		*** $this->phone_number @string - phone number
+		*** $this->opening_hours @array - array of opening hours (index: 0 - sunday, 6 - saturday)
 		*/
 		private function _handle_DOM(){
 			// Restaurant name
@@ -138,6 +144,15 @@ include_once 'simple_html_dom.class.php';
 				}
 			}
 
+			// Opening Hours
+			$this->opening_hours = [];
+			$hours_div = $this->DOM->find(".hours-area",0);
+			foreach($hours_div->find(".day-block") as $day){
+
+				// Push each's day opening hours
+				array_push($this->opening_hours,$day->find(".time",0)->plaintext);
+			}
+
 			// Phone number
 			$this->phone_number = $this->DOM->find(".phone-number",0)->plaintext;
 
@@ -146,6 +161,9 @@ include_once 'simple_html_dom.class.php';
 
 			// Shipping cost
 			$this->shipping_cost = $this->DOM->find(".js-deliveryPrice",0)->plaintext;
+
+			// Category
+			$this->category = $this->DOM->find("div[data-key=r_category]",0)->getAttribute("data-value");
 		}
 	}
 
