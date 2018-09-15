@@ -47,7 +47,7 @@ include_once 'exceptions.class.php';
 
 	class ZapRest extends Rest{
 
-		public function __construct($rest_id,$city_slug){
+		public function __construct($rest_id,$city_slug = 'none'){
 
 			// Restaurant ID
 			$this->id = $rest_id;
