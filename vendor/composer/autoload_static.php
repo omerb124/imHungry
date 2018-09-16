@@ -20,11 +20,21 @@ class ComposerStaticInit447a30297d5d2e1213122f15c5d1c2b6
         ),
     );
 
+    public static $classMap = array (
+        'Foodo\\City' => __DIR__ . '/../..' . '/src/city.class.php',
+        'Foodo\\Rest' => __DIR__ . '/../..' . '/src/rest.class.php',
+        'Foodo\\RestAlreadyExists' => __DIR__ . '/../..' . '/src/exceptions.class.php',
+        'Foodo\\Utils' => __DIR__ . '/../..' . '/src/utils.class.php',
+        'Foodo\\ZapCity' => __DIR__ . '/../..' . '/src/zap_city.php',
+        'Foodo\\ZapRest' => __DIR__ . '/../..' . '/src/zap_rest.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit447a30297d5d2e1213122f15c5d1c2b6::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit447a30297d5d2e1213122f15c5d1c2b6::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit447a30297d5d2e1213122f15c5d1c2b6::$classMap;
 
         }, null, ClassLoader::class);
     }
