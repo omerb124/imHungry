@@ -1,6 +1,7 @@
 {
-    "name": "foodo/foodo",
+    "name": "obachar46/imhungry",
 	"type": "library",
+	"minimum-stability": "dev",
 	"authors": [
         {
             "name": "OmerB",
