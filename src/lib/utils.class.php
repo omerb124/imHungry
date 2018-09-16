@@ -216,7 +216,7 @@ class Utils{
 	** @return @string user agent
 	*/
 	static public function getRandomUA(){
-		$list = file( PROJECT_ROOT . "user_agents_list.txt");
+		$list = file( PROJECT_ROOT . "ua.txt");
 		return $list[rand(0,sizeof($list)-1)];
 	}
 
