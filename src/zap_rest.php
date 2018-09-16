@@ -2,8 +2,6 @@
 
 namespace Foodo;
 
-use Foodo\simple_html_dom;
-
 class ZapRest extends Rest{
 
 		public function __construct($rest_id,$city_slug = 'none'){
