@@ -1,6 +1,7 @@
 {
     "name": "obachar46/imhungry",
 	"type": "library",
+	"prefer-stable": true,
 	"minimum-stability": "dev",
 	"authors": [
         {
@@ -8,5 +9,9 @@
             "email": "obachar46@gmail.com"
         }
     ],
-	"version" : 1.7
+	"autoload": {
+        "psr-4": {
+            "Foodo\\": "src/"
+        }
+    }
 }
