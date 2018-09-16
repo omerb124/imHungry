@@ -1,5 +1,5 @@
 <?php
-namespace Foodo\Lib;
+namespace Foodo;
 
 // Rest already exists
 class RestAlreadyExists extends Exception{

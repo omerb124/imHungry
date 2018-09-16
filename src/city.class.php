@@ -1,6 +1,6 @@
 <?php
 
-namespace Foodo\Lib;
+namespace Foodo;
 
 class City{
 
