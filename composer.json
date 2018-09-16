@@ -4,5 +4,14 @@
         "psr-4" : {
             "Foodo\\" : "src"
         }
-    }
+    },
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/Youpie/simple-html-dom"
+		}
+	],
+	"require": {
+		"simple-html-dom/simple-html-dom": "*"
+	}
 }
