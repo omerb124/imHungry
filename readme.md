@@ -1,7 +1,7 @@
 # Im Hungry!
 # Simple and Awesome Search Engine for Food Delivery, we won't leave you hungry!
 
-Basically, this API is for developers who develops food apps, or just need data about specific restaurants (like opening hours, restaurant's average rating by customers). It can be helpful also for developers who wants to check and compare the prices between different cities and populations, in order to draw conclusions.
+Basically, this API is for developers who develop food apps, or just need data about specific restaurants (like opening hours, restaurant's average rating by customers). It can be helpful also for developers who wants to check and compare the prices between different cities and populations, in order to draw conclusions.
 
 ## Available Data Scraping centers
 * [mishlohim.co.il](http://mishlohim.co.il)
