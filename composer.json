@@ -8,10 +8,5 @@
             "email": "obachar46@gmail.com"
         }
     ],
-	"version" : 1.6,
-    "autoload": {
-        "psr-4" : {
-            "Foodo\\" : "src"
-        }
-    }
+	"version" : 1.6
 }
