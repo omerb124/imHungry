@@ -65,12 +65,12 @@ class Rest{
 				$this->_handleDOM();
 
 				// If menu is not a custom menu
-				if($this->custom_menu !== true){
-
-					// Adding to database
-					$this->_addToDb();
-
-				}
+//				if($this->custom_menu !== true){
+//
+//					// Adding to database
+//				    $this->_addToDb();
+//
+//				}
 			}
 			else{
 				echo 'cant extract DOM.';
