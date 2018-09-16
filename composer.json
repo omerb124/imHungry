@@ -1,0 +1,8 @@
+{
+    "name": "foodo/foodo",
+    "autoload": {
+        "psr-4" : {
+            "Foodo\\Lib" : "src"
+        }
+    }
+}
