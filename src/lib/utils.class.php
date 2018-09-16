@@ -1,14 +1,19 @@
 <?php
 
+namespace Foodo\Lib;
+
 /* UTILS Class
 ** Functions list:
 *** query() - Execute Query
 *** dte() - Get current date
-*** get_location() - Get location lat&lon by address string
+*** getLocation() - Get location lat&lon by address string
 *** get() - Send request to url and get response
-*** get_distance() - Distance calculator using lan & lon values
+*** getDistance() - Distance calculator using lan & lon values
 *** log() -> Send log to database
-*** multi_query() -> Execute single query with multiple values
+*** multiQuery() -> Execute single query with multiple values
+*** getRandomProxy() -> get random proxy from proxies list (proxy_list.txt)
+*** getRandomUA() -> get random user agent from user agents lists (user_agents_list.txt)
+*** jsonError() -> returns json encoded array with error message
 */
 
 class Utils{
@@ -29,7 +34,7 @@ class Utils{
 	** @GET #pdo_query @string - PDO query to be executed
 	** 		#values_arrays @array - query parameters
 	*/
-	public static function multi_query($pdo_query,$values_arrays){
+	public static function multiQuery($pdo_query,$values_arrays){
 		global $conn;
 
 		// turn on exceptions && errmode
@@ -100,7 +105,7 @@ class Utils{
 	*** #lat @string
 	*** #lon @string
 	*/
-	static public function get_location($location){
+	static public function getLocation($location){
 
 		// Decode special characters
 		$location = htmlspecialchars_decode($location,ENT_QUOTES);
@@ -109,15 +114,15 @@ class Utils{
 		$url = sprintf("https://nominatim.openstreetmap.org/search?format=json&q=%s",urlencode($location));
 
 		// Send request and make it able to read
-		$data = Utils::get($url);
+		$data = self::get($url,false);
 		$data = json_decode($data,true);
 
 		if(sizeof($data) == 0){
 
-			// Service cannot found the location, lets try with another api
+			// Service cannot found the location, lets try with another api service
 			$url2 = sprintf("https://geocoder.api.here.com/6.2/geocode.json?app_id=BgBrb1phfLvzctdAipg2&app_code=tLLkS5G4pzNmPNEI2jpsxQ&searchtext=%s&country=il",urlencode($location));
 
-			$data2 = Utils::get($url2);
+			$data2 = self::get($url2,false);
 			$data2 = json_decode($data2,true);
 
 			// If location not found also with the another api
@@ -127,9 +132,7 @@ class Utils{
 			$result = $data2['Response']['View'][0]['Result'][0]['Location']['NavigationPosition'][0];
 			return array('lon' => $result['Longitude'],
 						 'lat' => $result['Latitude']);
-		}
-
-		else{
+		} else {
 			return array('lon' => $data[0]['lon'],
 						 'lat' => $data[0]['lat']);
 		}
@@ -137,17 +140,27 @@ class Utils{
 
 	/* Like file_get_contents, but much better.
 	** @GET #url @string - url to be opened
+			#proxy @boolean - request via proxy? default is true
+			#random_ua @boolean - request via random user agent? default is true
 	** @return @string - response
 	*/
-	static public function get($url){
+	static public function get($url,$proxy=true,$random_ua=true){
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch,CURLOPT_USERAGENT,"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
+		curl_setopt($ch, CURLOPT_URL, $url);         // URL for CURL call
+
+		if($proxy):
+			curl_setopt($ch, CURLOPT_PROXY, self::get_random_proxy());     // PROXY details with port
+			//curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);   // Use if proxy have username and password
+			curl_setopt($ch, CURLOPT_USERAGENT, self::get_random_user_agent()); // Setting a user agent
+		endif;
+
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);  // If url has redirects then go to the final redirected URL.
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);  // Do not outputting it out directly on screen.
+		curl_setopt($ch, CURLOPT_HEADER, 1);   // If you want Header information of response else make 0
+		$curl_scraped_page = curl_exec($ch);
 		curl_close($ch);
 
-		return $result;
+		return $curl_scraped_page;
 	}
 
 	/* Distance calculator
@@ -162,7 +175,7 @@ class Utils{
 	** @return
 	** @int - result in choosen unit
 	*/
-	static public function get_distance($location1,$location2,$unit="K"){
+	static public function getDistance($location1,$location2,$unit="K"){
 		$theta = $location1['lon'] - $location2['lon'];
 		$dist = sin(deg2rad($location1['lat'])) * sin(deg2rad($location2['lat'])) +  cos(deg2rad($location1['lat'])) * cos(deg2rad($location2['lat'])) * cos(deg2rad($theta));
 		$dist = acos($dist);
@@ -191,6 +204,33 @@ class Utils{
 		self::query("INSERT into logs (status,message,date) values (?,?,?)",false,$status,$message,self::dte());
 	}
 
+	/* Get random proxy from list (proxy_list.txt)
+	** @return @string proxy (ip:port format)
+	*/
+	static public function get_random_proxy(){
+		$proxy_list = file( PROJECT_ROOT . "proxy_list.txt");
+		return $proxy_list[rand(0,sizeof($proxy_list)-1)];
+	}
+
+	/* Get random user agent from list (user_agents_list.txt)
+	** @return @string user agent
+	*/
+	static public function getRandomUA(){
+		$list = file( PROJECT_ROOT . "user_agents_list.txt");
+		return $list[rand(0,sizeof($list)-1)];
+	}
+
+	/* Returns an json encoded array of error message
+	** @GET @string error message
+	**		@int status code (optional)(default=403)
+	** @return @array
+	*/
+	static public function jsonError($message,$status=403){
+		echo json_encode(
+			array('status' => $status,
+				  'message' => $message)
+		);
+	}
 
 }
 

@@ -1,10 +1,8 @@
 <?php
 
-include_once 'utils.class.php';
-include_once 'simple_html_dom.class.php';
-include_once 'exceptions.class.php';
+namespace Foodo\Lib;
 
-	class Rest{
+class Rest{
 
 		// Restaurant ID
 		public $id;
@@ -40,7 +38,7 @@ include_once 'exceptions.class.php';
 		public $category;
 
 		// Is it a custom menu
-		public $customMenu;
+		public $custom_menu;
 
 	}
 
@@ -56,7 +54,7 @@ include_once 'exceptions.class.php';
 			$this->city_slug = $city_slug;
 
 			// Scraping data
-			$this->_scrape_data();
+			$this->_scrapeData();
 
 			if($this->DOM != null){
 
@@ -64,13 +62,13 @@ include_once 'exceptions.class.php';
 				$this->products = [];
 
 				// Handling DOM
-				$this->_handle_DOM();
+				$this->_handleDOM();
 
 				// If menu is not a custom menu
-				if($this->customMenu !== true){
+				if($this->custom_menu !== true){
 
 					// Adding to database
-					$this->_add_to_db();
+					$this->_addToDb();
 
 				}
 			}
@@ -83,7 +81,7 @@ include_once 'exceptions.class.php';
 		** @GET #rest_id @int Rest ID on zap
 		** @return @boolean
 		*/
-		public static function rest_id_exists($rest_id){
+		public static function restIdExists($rest_id){
 			$data = Utils::query("SELECT COUNT(id) as count FROM rests WHERE data_id=? LIMIT 1",false,$rest_id);
 
 			return ($data['count'] > 0);
@@ -92,7 +90,7 @@ include_once 'exceptions.class.php';
 		/* Scraping rest data from website
 		** 	@return @array data
 		*/
-		private function _scrape_data(){
+		private function _scrapeData(){
 			try{
 				$this->DOM = file_get_html($this->get_rest_url());
 			}
@@ -106,7 +104,7 @@ include_once 'exceptions.class.php';
 		/* Get resturant URL
 		** return @string - restaurant url
 		*/
-		public function get_rest_url(){
+		public function getRestUrl(){
 			return 'https://www.mishlohim.co.il/menu/' . $this->id;
 		}
 
@@ -126,7 +124,7 @@ include_once 'exceptions.class.php';
 		*** $this->phone_number @string - phone number
 		*** $this->opening_hours @array - array of opening hours (index: 0 - sunday, 6 - saturday)
 		*/
-		private function _handle_DOM(){
+		private function _handleDOM(){
 
 			// Validate that this is not a customed menu
 			// (like in https://www.mishlohim.co.il/ExternalMenu.aspx?BusinessID=5034)
@@ -216,7 +214,7 @@ include_once 'exceptions.class.php';
 				if(strlen($this->address) > 3){
 
 					// Request to location API
-					$location_data = Utils::get_location($this->address);
+					$location_data = Utils::getLocation($this->address);
 					if($location_data !== false){
 						$this->lon = $location_data['lon'];
 						$this->lat = $location_data['lat'];
@@ -271,26 +269,26 @@ include_once 'exceptions.class.php';
 
 			}
 			else{
-				$this->customMenu = true;
+				$this->custom_menu = true;
 			}
 		}
 
 		/* Adding rest data to DB
 		** @void
 		*/
-		private function _add_to_db(){
+		private function _addToDb(){
 
 			// Adding cateogry to database, if exists - return existing ID record
-			$db_cat_id = $this->_add_category_to_db();
+			$db_cat_id = $this->_addCategoryToDb();
 
 			try{
 				// Adding rest to database according to given category id, if exists - returns existing ID
-				$db_rest_id = $this->_add_rest_to_db($db_cat_id);
+				$db_rest_id = $this->_addRestToDb($db_cat_id);
 
 				var_dump($db_rest_id,"DB REST ID",$this->id,"ZAP ID");
 
 				// Adding products to database, according to provided rest ID
-				$this->_add_products_to_db($db_rest_id);
+				$this->_addProductsToDb($db_rest_id);
 
 				// Update logs about success
 				Utils::log(true,sprintf("New rest has been added. ID == %s, CITY_SLUG == %s",$db_rest_id,$this->city_slug));
@@ -317,7 +315,7 @@ include_once 'exceptions.class.php';
 		** Starting with checking if category is already exists.
 		** @return @int record's id of category on database, also if category exists
 		*/
-		private function _add_category_to_db(){
+		private function _addCategoryToDb(){
 
 			if($this->category){
 
@@ -347,7 +345,7 @@ include_once 'exceptions.class.php';
 		** @GET @int category's id on database
 		** @return @int rest's row ID on database
 		*/
-		private function _add_rest_to_db($db_cat_id){
+		private function _addRestToDb($db_cat_id){
 
 			try{
 				// Check if restaurant with name & location
@@ -402,7 +400,7 @@ include_once 'exceptions.class.php';
 		** @GET #db_rest_id @int - Rest ID on database
 		** @void
 		*/
-		private function _add_products_to_db($db_rest_id){
+		private function _addProductsToDb($db_rest_id){
 
 			foreach($this->products as $category){
 
@@ -434,7 +432,7 @@ include_once 'exceptions.class.php';
 				try{
 
 					// Execute query
-					Utils::multi_query($query,$products_array_to_query);
+					Utils::multiQuery($query,$products_array_to_query);
 
 				} catch (Exception $e){
 

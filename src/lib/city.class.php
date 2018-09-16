@@ -1,8 +1,6 @@
 <?php
 
-include_once 'utils.class.php';
-include_once 'rest.class.php';
-include_once 'simple_html_dom.class.php';
+namespace Foodo\Lib;
 
 class City{
 
@@ -24,23 +22,23 @@ class ZapCity extends City{
 		$this->id = $id;
 
 		// Get rests ID's
-		$this->rests_ids = $this->_get_rests_ids();
+		$this->rests_ids = $this->_getRestsIds();
 
 		// Scrape the rests data
-		$this->_scrape_rests_data();
+		$this->_scrapeRestsData();
 	}
 
 	/* Returns city's rests index url on website
 	** @return @string index url
 	*/
-	public function get_city_url(){
+	public function getCityUrl(){
 		return sprintf('https://www.mishlohim.co.il/food_delivery/%s/all_food_types/',$this->id);
 	}
 
 	/* Loop rests ID's and scrapes the data
 	** @void
 	*/
-	private function _scrape_rests_data(){
+	private function _scrapeRestsData(){
 
 		// Debugging
 		if(Utils::$debug){
@@ -49,7 +47,7 @@ class ZapCity extends City{
 
 		foreach($this->rests_ids as $rest_id){
 			print("Adding zapRest No. " . $rest_id);
-			$rest_data = new zapRest($rest_id,$this->id);
+			$rest_data = new ZapRest($rest_id,$this->id);
 			usleep(200000);
 		}
 	}
@@ -57,12 +55,12 @@ class ZapCity extends City{
 	/* Scrapes the city's rests index in order to find the rest's IDs.
 	** @return array of @string (rest IDs)
 	*/
-	private function _get_rests_ids(){
+	private function _getRestsIds(){
 
 		$array = [];
 
 		// Extract DOM
-		$data = file_get_html($this->get_city_url());
+		$data = file_get_html($this->getCityUrl());
 
 		// Extract rests IDs from first page
 		foreach($data->find("div[data-minimum-price]") as $row){
@@ -80,7 +78,7 @@ class ZapCity extends City{
 		for($i = 2; $i <= $pages; $i++){
 
 			// Get page source code
-			$url = $this->get_city_url() . '?page=' . $i;
+			$url = $this->getCityUrl() . '?page=' . $i;
 			$data = file_get_html($url);
 
 			// Extract rests IDs from first page
