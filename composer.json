@@ -11,7 +11,7 @@
 	"version" : 1.2,
     "autoload": {
         "psr-4" : {
-            "Foodo\\Lib" : "src"
+            "Foodo\\" : "src"
         }
     }
 }
