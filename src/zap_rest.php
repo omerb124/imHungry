@@ -53,7 +53,7 @@ class ZapRest extends Rest{
 		*/
 		private function _scrapeData(){
 			try{
-				$this->DOM = \file_get_html($this->get_rest_url());
+				$this->DOM = file_get_html($this->get_rest_url());
 			}
 			catch (Exception $e){
 				print("Error: " . $e->getMessage());
