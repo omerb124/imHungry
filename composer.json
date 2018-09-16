@@ -2,20 +2,11 @@
     "name": "obachar46/imhungry",
     "autoload": {
         "psr-4" : {
-            "Foodo\\" : "src",
-
+            "Foodo\\" : "src"
         },
-		"classmap" : [
-				"vendor/simple-html-dom/simple-html-dom/simple_html_dom.php"
+		"files" : [
+				"src/lib/simple_html_dom.php"
 		]
-    },
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/Youpie/simple-html-dom"
-		}
-	],
-	"require": {
-		"simple-html-dom/simple-html-dom": "*"
-	}
+
+    }
 }

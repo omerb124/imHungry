@@ -6,6 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'classmap' => array($vendorDir . '/simple-html-dom/simple-html-dom/simple_html_dom.php'),
     'Foodo\\' => array($baseDir . '/src'),
 );
