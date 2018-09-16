@@ -1,5 +1,13 @@
 {
     "name": "foodo/foodo",
+	"type": "library",
+	"authors": [
+        {
+            "name": "OmerB",
+            "email": "obachar46@gmail.com"
+        }
+    ],
+	"version" : 1.0,
     "autoload": {
         "psr-4" : {
             "Foodo\\Lib" : "src"
