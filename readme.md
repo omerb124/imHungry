@@ -1,5 +1,5 @@
 # Im Hungry!
-# Simple and Awesome Search Engine for Food Delivery, we won't leave you hungry!
+# Simple and Awesome Scraping Script for Food Delivery websites on Israel
 
 Basically, this API is for developers who develops food apps, or just need data about specific restaurants (like opening hours, restaurant's average rating by customers). It can be helpful also for developers who wants to check and compare the prices between different cities and populations, in order to draw conclusions.
 
