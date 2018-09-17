@@ -28,6 +28,26 @@ Basically, this API is for developers who develops food apps, or just need data 
 * Address cordinates (longittude and lattitude)
 * Restaurant's phone number
 
+## Installation 
+
+The preferred way to install our module is by using [composer](http://getcomposer.org).
+add that code to your __"composer.json"__ file:
+```
+{
+
+	"repositories": [
+		{
+			"type": "gitlab",
+			"url": "https://gitlab.com/obachar46/imHungry"
+		}
+	],
+	"require": {           
+			"obachar46/imhungry": "dev-master"
+	}
+}
+```
+Then, hit 'composer update' on cmd, and the module will be installed to your project.
+
 ## How to use __Scraping__ (for example - mishlohim.co.il restaurant)
 
 ### Firstly, how to scrape the data of single restaurant web page?
