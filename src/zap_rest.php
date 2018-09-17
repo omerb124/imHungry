@@ -217,7 +217,12 @@ class ZapRest extends Rest
 					foreach($hours_div->find(".day-block") as $day){
 
 						// Push each's day opening hours
-						array_push($this->opening_hours,$day->find(".time",0)->plaintext);
+						if($day->find(".time",0)->plaintext != "סגור למשלוחים"){
+							array_push($this->opening_hours,$day->find(".time",0)->plaintext);
+						}
+						else{
+							array_push($this->opening_hours,false);
+						}
 					}
 				}
 

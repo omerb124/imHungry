@@ -28,29 +28,47 @@ Basically, this API is for developers who develops food apps, or just need data 
 * Address cordinates (longittude and lattitude)
 * Restaurant's phone number
 
-## How to use __Scraping with database__
+## How to use __Scraping__ (for example - mishlohim.co.il restaurant)
 
-### Firstly, update database connection file ('init/conn.php')
+### Firstly, how to scrape the data of single restaurant web page?
 ```
-$servername = "localhost";
-$username = "{YOUR_DB_USERNAME}";
-$password = "{YOUR_DB_PASSWORD}";
-// Create connection
-$conn = new PDO('mysql:host=localhost;dbname={YOUR_DB_NAME}', $username, $password);
+$restaurant = new ZapRest(7440); // Scrapes the data from restaurant with ID == 7440
+```
+### Get products list 
+```
+foreach($restaurant->products as $product){
+
+	echo $product['product_name']; // Product name
+	echo $product['product_price']; // Product price
+	echo $product['product_desc']; // Product description
+	echo $product['product_image']; // Product image
+	
+	.... other code to run on each product member
+}
 ```
 
-### Scraping single rest data
+### Get restaurant opening hours
 ```
-$rest_data = new ZapRest("{ZAP_REST_ID}");
+$opening_hours = $restaurant['opening_hours'];
+for($i = 0; $i <= 6; $i++){
+	
+	if($opening_hours[$i] !== false){
+		echo sprintf("On day %s of the week, we are active on %s",$i+1,$opening_hours[$i]);
+	}
+	else{
+		echo sprintf("On day %s of the week, we are not active");
+	}
+}
 ```
 
-### Scraping the whole city's rests data
+### Get other settings of restaurant
 ```
-$city_rests_data = new zapCity("{ZAP_CITY_ID"});
+echo $restaurant['address']; // Restaurant address
+echo $restaurant['lon']; // Restaurant address longitude
+echo $restaurant['lat']; // Restaurant address latitude
+echo $restaurant['category']; // Restaurant category on website
+echo $restaurant['rest_rating']; // Restaurant average users rating on website
 ```
-## How to use Scraping API
-
 
 ## TO-DOs
 * To add another data centers (mishloha.co.il,easy.co.il)
-* To build a beautiful API for getting the data
