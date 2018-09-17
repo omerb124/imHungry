@@ -9,8 +9,8 @@ Basically, this API is for developers who develops food apps, or just need data 
 * ~~mishloha.co.il~~ - SOON
 
 ## Features
-* Full single rest data scraping (directly to database)
-* Full whole city's rests data scraping (directly to database)
+* Full single rest data scraping
+* Full whole city's rests data scraping
 
 ## Which data is being scraped from each restaurant?
 * Restaurant name
