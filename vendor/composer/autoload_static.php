@@ -27,10 +27,12 @@ class ComposerStaticInit447a30297d5d2e1213122f15c5d1c2b6
     public static $classMap = array (
         'Foodo\\City' => __DIR__ . '/../..' . '/src/city.class.php',
         'Foodo\\Rest' => __DIR__ . '/../..' . '/src/rest.class.php',
-        'Foodo\\RestAlreadyExists' => __DIR__ . '/../..' . '/src/exceptions.class.php',
         'Foodo\\Utils' => __DIR__ . '/../..' . '/src/utils.class.php',
         'Foodo\\ZapCity' => __DIR__ . '/../..' . '/src/zap_city.php',
         'Foodo\\ZapRest' => __DIR__ . '/../..' . '/src/zap_rest.php',
+        'Foodo\\badInputException' => __DIR__ . '/../..' . '/src/exceptions.class.php',
+        'Foodo\\cantScrapeUrl' => __DIR__ . '/../..' . '/src/exceptions.class.php',
+        'Foodo\\restAlreadyExists' => __DIR__ . '/../..' . '/src/exceptions.class.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

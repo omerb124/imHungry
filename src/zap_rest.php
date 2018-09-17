@@ -2,15 +2,18 @@
 
 namespace Foodo;
 
-class ZapRest extends Rest{
+class ZapRest extends Rest
+{
 
-		public function __construct($rest_id,$city_slug = 'none'){
-
+		public function __construct($rest_id)
+		{
 			// Restaurant ID
-			$this->id = $rest_id;
-
-			// City name
-			$this->city_slug = $city_slug;
+			if($this->_check_input($rest_id)){
+				$this->id = $rest_id;
+			}
+			else{
+				throw new badInputException($rest_id,'$rest_id');
+			}
 
 			// Scraping data
 			$this->_scrapeData();
@@ -32,9 +35,20 @@ class ZapRest extends Rest{
 //				}
 			}
 			else{
-				echo 'cant extract DOM.';
+				throw new cantScrapeUrl($this->getRestUrl());
 			}
 		}
+
+		/* Check input of rest_id (numeric only)
+		**
+		** @GET string rest_id
+		**
+		** @return boolean
+		*/
+		private function _check_input($rest_id){
+			return is_numeric($rest_id);
+		}
+
 
 		/* Check if rest with this ZAP ID has been already added.
 		** @GET #rest_id @int Rest ID on zap
@@ -54,8 +68,7 @@ class ZapRest extends Rest{
 				$this->DOM = file_get_html($this->getRestUrl());
 			}
 			catch (Exception $e){
-				print("Error: " . $e->getMessage());
-				$this->DOM = null;
+				throw new Exception("Cannot scrape the page. validate the url and try again.");
 			}
 
 		}
@@ -155,8 +168,21 @@ class ZapRest extends Rest{
 					array_push($this->products,array('name' => $category_name, 'products' => $category_array));
 				}
 
+				// City slug (city id on website)
+				if(!$this->DOM->find(".header-breadcrumbs a[itemprop=url]",2)){
+					$city_slug = false;
+				}
+				else{
+					$city_slug = explode('/',$this->DOM->find(".header-breadcrumbs a[itemprop=url]",2)->href)[2];
+					if(strlen($city_slug) < 2 || empty($city_slug)){
+						$city_slug = false;
+					}
+				}
+				$this->city_slug = $city_slug;
+
 				// Restaurant rating
 				$rest_rating = $this->DOM->find(".grade",0);
+
 				// Check if rating does exists, if not - return 1
 				$this->rest_rating = $rest_rating ? $rest_rating->plaintext : -1;
 
@@ -164,7 +190,8 @@ class ZapRest extends Rest{
 				$this->address = $this->DOM->find("h4[itemprop=streetAddress]",0)->plaintext;
 
 				if(!$this->DOM->find("h4[itemprop=streetAddress]",0)){
-					print("NO ADDRESS ON " . $this->id);
+					// No address is found on webpage
+					$this->address = false;
 				}
 
 
@@ -179,7 +206,7 @@ class ZapRest extends Rest{
 						$this->lat = $location_data['lat'];
 					}
 					else{
-						$this->lon = $this->lat = '';
+						$this->lon = $this->lat = false;
 					}
 				}
 
@@ -209,7 +236,7 @@ class ZapRest extends Rest{
 					$this->min_price = trim(str_replace("₪","",$this->DOM->find(".js-minimumPrice",0)->plaintext));
 				}
 				else{
-					$this->min_price = -1;
+					$this->min_price = false;
 				}
 
 
@@ -219,15 +246,18 @@ class ZapRest extends Rest{
 					$this->shipping_cost = trim(str_replace("₪","",$this->DOM->find(".js-deliveryPrice",0)->plaintext));
 				}
 				else{
-					$this->shipping_cost = -1;
+					$this->shipping_cost = false;
 				}
 
 
 				// Category
 				$this->category = $this->DOM->find("div[data-key=r_category]",0)->getAttribute("data-value");
 
+				// Custom menu
+				$this->custom_menu = false;
 			}
 			else{
+				// This is a custom menu
 				$this->custom_menu = true;
 			}
 		}
@@ -252,7 +282,7 @@ class ZapRest extends Rest{
 				// Update logs about success
 				Utils::log(true,sprintf("New rest has been added. ID == %s, CITY_SLUG == %s",$db_rest_id,$this->city_slug));
 
-			} catch (RestAlreadyExists $e){
+			} catch (restAlreadyExists $e){
 				// Rest already exists on db
 				Utils::log(false,$e->getError());
 				die($e->getError);

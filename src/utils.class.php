@@ -18,7 +18,7 @@ namespace Foodo;
 
 class Utils{
 
-	public static $debug = true;
+	public static $debug = false;
 
 	/* Returns current date
 	** @GET #format (optional) @string - date format
@@ -105,37 +105,42 @@ class Utils{
 	*** #lat @string
 	*** #lon @string
 	*/
-	static public function getLocation($location){
-
+	static public function getLocation($location)
+	{
 		// Decode special characters
 		$location = htmlspecialchars_decode($location,ENT_QUOTES);
 
 		// Prepare request URL
-		$url = sprintf("https://nominatim.openstreetmap.org/search?format=json&q=%s",urlencode($location));
+		$url = sprintf("https://geocoder.api.here.com/6.2/geocode.json?app_id=BgBrb1phfLvzctdAipg2&app_code=tLLkS5G4pzNmPNEI2jpsxQ&searchtext=%s&country=il",urlencode($location));
 
-		// Send request and make it able to read
 		$data = self::get($url,false);
 		$data = json_decode($data,true);
 
-		if(sizeof($data) == 0){
+		// If location not found also with the another api
+		if(sizeof($data['Response']['View']) == 0){
+			// Prepare request URL
+			$url = sprintf("https://nominatim.openstreetmap.org/search?format=json&q=%s",urlencode($location));
 
-			// Service cannot found the location, lets try with another api service
-			$url2 = sprintf("https://geocoder.api.here.com/6.2/geocode.json?app_id=BgBrb1phfLvzctdAipg2&app_code=tLLkS5G4pzNmPNEI2jpsxQ&searchtext=%s&country=il",urlencode($location));
+			// Send request and make it able to read
+			$data = self::get($url,false);
+			$data = json_decode($data,true);
 
-			$data2 = self::get($url2,false);
-			$data2 = json_decode($data2,true);
 
-			// If location not found also with the another api
-			if(sizeof($data2['Response']['View']) == 0) return false;
+			if(sizeof($data) == 0) return false;
 
-			// If location has found, lets return it
-			$result = $data2['Response']['View'][0]['Result'][0]['Location']['NavigationPosition'][0];
-			return array('lon' => $result['Longitude'],
-						 'lat' => $result['Latitude']);
-		} else {
+			// Return result
 			return array('lon' => $data[0]['lon'],
 						 'lat' => $data[0]['lat']);
+
 		}
+
+		// If location has been found
+		$result = $data['Response']['View'][0]['Result'][0]['Location']['NavigationPosition'][0];
+
+		// Return result
+		return array('lon' => $result['Longitude'],
+					 'lat' => $result['Latitude']);
+
 	}
 
 	/* Like file_get_contents, but much better.
@@ -155,8 +160,8 @@ class Utils{
 		endif;
 
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);  // If url has redirects then go to the final redirected URL.
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);  // Do not outputting it out directly on screen.
-		curl_setopt($ch, CURLOPT_HEADER, 1);   // If you want Header information of response else make 0
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  // Do not outputting it out directly on screen.
+		curl_setopt($ch, CURLOPT_HEADER, 0);   // If you want Header information of response else make 0
 		$curl_scraped_page = curl_exec($ch);
 		curl_close($ch);
 
